@@ -159,8 +159,8 @@
 
 
 (defn- cond-enc [values c f args]
-  (let [[v1 v2] values ;; TODO: throw if not a tuple.
-        c2 (f v1)]
+  (let [[v1 v2] values ;; TODO: throw if not a tuple?
+        c2 (apply f v1 args)]
     (clojure.core/concat (encode c v1)
                          (encode c2 v2))))
 
@@ -177,16 +177,6 @@
   the first value."
   [c f & args]
   (c-switch c cond-enc cond-dec c f args))
-
-#_(defn length-prefix [length-codec coll]
-  (-> 
-      (conditional length-codec
-                   (fn [len]
-                     
-                     )
-                   )
-      (translate ))
-  )
 
 #_(defn- repeat-enc [values c]
   
@@ -206,6 +196,21 @@
 (defn repeat "Returns a codec that is a [[seq]] of `n` times the same codec repeated."
   #_([c] (c-switch c repeat-enc repeat-dec c))
   ([n c] (apply seq (clojure.core/repeat n c))))
+
+(defn- length-prefix-add-length [coll]
+  [(count coll) coll])
+
+(defn- length-prefix-remove-length [[len coll]]
+  coll)
+
+(defn length-prefix
+  "Returns a codec for a sequence of `coll-item-codec` of any length,
+  where the length is encoded using `length-codec` and placed before
+  the encoding of the collection items."
+  [length-codec coll-item-codec]
+  (-> (conditional length-codec repeat coll-item-codec)
+      (translate length-prefix-add-length
+                 length-prefix-remove-length)))
 
 #_(defn- take-enc [values n]
   (assert (= n (count values)))

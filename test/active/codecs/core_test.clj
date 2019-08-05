@@ -71,3 +71,15 @@
            (core/try-decode h-w [\W \o \r \l \d])))
     (is (= [\W \o \r \l \d]
            (core/encode h-w ["W" "orld"])))))
+
+(deftest length-prefix-test
+  (is (= [["He" "ll"] '()]
+         (core/decode (core/length-prefix core/singleton (n-chars 2))
+                      [2 \H \e \l \l])))
+  (is (= [["He" "ll"] (list \o)]
+         (core/decode (core/length-prefix core/singleton (n-chars 2))
+                      [2 \H \e \l \l \o])))
+  (is (= [2 \H \e \l \l]
+         (core/encode (core/length-prefix core/singleton (n-chars 2))
+                      ["He" "ll"])))
+  )

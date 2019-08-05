@@ -6,7 +6,7 @@
 
   :dependencies [[org.clojure/clojure "1.10.0"]]
 
-  :profiles {:dev {:source-paths ["src" "test"]}
+  :profiles {:test {:source-paths ["src" "test"]}
 
              :codox {:dependencies [[codox-theme-rdash "0.1.2"]]}}
 

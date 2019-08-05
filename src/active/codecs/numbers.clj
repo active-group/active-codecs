@@ -50,9 +50,9 @@
 (def ^{:doc "Codec of an 8 bit unsigned integer."} uint8 (unsigned->signed-2c int8-2c 8))
 
 (defn- split-high-low [value n bits]
-  (let [p (- (bit-shift-left 1 (inc bits)) 1)]
+  (let [p (- (bit-shift-left 1 bits) 1)]
     (map (fn [b]
-           (bit-and (bit-shift-right value b) p))
+           (bit-and (bit-shift-right value (* bits b)) p))
          (reverse (range n)))))
 
 (defn- join-high-low [parts n bits]

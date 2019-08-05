@@ -97,3 +97,11 @@
 (def ^{:doc "An alias of [[int16-be-2c]]."} int16 int16-be-2c)
 (def ^{:doc "An alias of [[int24-be-2c]]."} int24 int24-be-2c)
 (def ^{:doc "An alias of [[int32-be-2c]]."} int32 int32-be-2c)
+
+(defn i-mul [a b] (long (* a b)))
+
+(defn factor-decimal
+  "Returns a codec based on the integer codec `c`, but for decimal
+  values based on multiplicatin/division by the given factor."
+  [c factor]
+  (core/translate c i-mul / factor))

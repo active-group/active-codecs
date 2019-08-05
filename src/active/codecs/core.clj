@@ -244,5 +244,5 @@
   (record :a int8 :b uint32)"
   [key c & more]
   (let [m (partition 2 (cons key (cons c more)))]
-    (-> (seq (map second m))
+    (-> (apply seq (map second m))
         (translate record-enc record-dec (map first m)))))

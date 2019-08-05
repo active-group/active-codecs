@@ -72,6 +72,14 @@
     (is (= [\W \o \r \l \d]
            (core/encode h-w ["W" "orld"])))))
 
+(deftest record-test
+  (is (= {:a 2 :b "He"}
+         (core/decode-full (core/record :a core/singleton :b (n-chars 2))
+                           [2 \H \e])))
+  (is (= [2 \H \e]
+         (core/encode (core/record :a core/singleton :b (n-chars 2))
+                      {:a 2 :b "He"}))))
+
 (deftest length-prefix-test
   (is (= [["He" "ll"] '()]
          (core/decode (core/length-prefix core/singleton (n-chars 2))

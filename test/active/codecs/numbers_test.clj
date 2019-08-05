@@ -37,3 +37,8 @@
          (core/decode-full numbers/int24-be-2c [b10000000 b00000000 b00000000])))
   (is (= -1
          (core/decode-full numbers/int24-be-2c [b11111111 b11111111 b11111111]))))
+
+(deftest factor-decimal-test
+  (let [c (numbers/factor-decimal numbers/int8 10)]
+    (is (= 21/5 (core/decode-full c [42])))
+    (is (= [42] (core/encode c 4.2)))))

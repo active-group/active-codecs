@@ -1,4 +1,5 @@
 (ns active.codecs.core
+  (:require [clojure.set :as set])
   (:refer-clojure :exclude [seq repeat take concat]))
 
 (defprotocol Encoder
@@ -139,13 +140,15 @@
          cs cs]
     (if (empty? cs)
       [res codes]
-      (let [res1 (decode (first cs) codes)]
-        (if (decoder-error? res1)
-          res1
-          (let [[v rest-codes] res1]
-            (recur (conj res v)
-                   rest-codes
-                   (rest cs))))))))
+      (if (empty? codes)
+        (decoder-error (str "Premature end of value sequence. Expected " (count cs) " more.") {:codecs cs})
+        (let [res1 (decode (first cs) codes)]
+          (if (decoder-error? res1)
+            res1
+            (let [[v rest-codes] res1]
+              (recur (conj res v)
+                     rest-codes
+                     (rest cs)))))))))
 
 (defn seq
   "Returns a codec for a sequence of values, given codecs for each. The codes are concatenated into one."
@@ -231,9 +234,12 @@
   (simple-codec list singleton-dec))
 
 (defn- record-enc [value keys]
+  (assert (map? value) (str "Unexpected value to encode as a record, must be a map: " (pr-str value)))
+  (assert (every? #(contains? value %) keys) (str "Value to encode misses some record fields: " (pr-str (set/difference (set (clojure.core/keys value)) (set keys)))))
   (map #(get value %) keys))
 
 (defn- record-dec [value keys]
+  (assert (= (count value) (count keys)) (str "Unexpected value to decode as a record, must be a sequence of " (count keys) " item: " (pr-str value)))
   (zipmap keys value))
 
 (defn record "Returns a codec for some named elements with different

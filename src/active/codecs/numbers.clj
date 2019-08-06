@@ -50,6 +50,7 @@
 (def ^{:doc "Codec of an 8 bit unsigned integer."} uint8 (unsigned->signed-2c int8-2c 8))
 
 (defn- split-high-low [value n bits]
+  (assert (<= 0 value (dec (bit-shift-left 1 (* n bits)))) (str "Value of range: " value))
   (let [p (- (bit-shift-left 1 bits) 1)]
     (map (fn [b]
            (bit-and (bit-shift-right value (* bits b)) p))
@@ -57,6 +58,7 @@
 
 (defn- join-high-low [parts n bits]
   (assert (= n (count parts)) (str "Expected " n " codes to decode, but got " (pr-str parts)))
+  (doseq [p parts] (assert (<= 0 p (dec (bit-shift-left 1 bits))) (str "Code of range: " p)))
   (reduce + (map (fn [p v]
                    (bit-shift-left v (* p bits)))
                  (range n)

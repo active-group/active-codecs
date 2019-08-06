@@ -1,4 +1,4 @@
-(defproject de.active-group/active-codecs "0.1.0"
+(defproject de.active-group/active-codecs "0.1.1-SNAPSHOT"
   :description "Composable codecs, encoding and decoding higher level values to lower level sequences of codes."
   :url "http://github.com/active-group/active-codecs"
   :license {:name "Eclipse Public License"

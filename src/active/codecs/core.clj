@@ -130,7 +130,7 @@
   (simple-codec translate-enc translate-dec c enc dec args))
 
 (defn- seq-enc [values cs]
-  (assert (= (count values) (count cs)))
+  (assert (= (count values) (count cs)) (str "Expected " (count cs) " values, but got " (count values)))
   (mapcat #(encode %1 %2)
           cs values))
 
